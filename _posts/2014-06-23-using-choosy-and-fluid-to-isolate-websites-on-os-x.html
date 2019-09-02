@@ -1,0 +1,39 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Using Choosy and Fluid to isolate websites on OS X '
+author:
+  display_name: Bart Dorsey
+  login: bart
+  email: bart@bartdorsey.com
+  url: http://bartdorsey.com
+author_login: bart
+author_email: bart@bartdorsey.com
+author_url: http://bartdorsey.com
+wordpress_id: 291
+wordpress_url: http://bartdorsey.com/?p=291
+date: '2014-06-23 19:20:51 -0400'
+date_gmt: '2014-06-23 19:20:51 -0400'
+categories:
+- Uncategorized
+tags: []
+comments: []
+---
+<p>For a while now I've been struggling with keeping a browser for work stuff, and a browser for home stuff on my same user account in OS X. Luckily, I found a great piece of software that solves this problem perfectly (almost). The software is <a href="http://www.choosyosx.com">Choosy</a>. &nbsp;It costs $12 and perfectly solves most multiple web browser problems you come across on a Mac.</p>
+<p>The way it works is, Choosy becomes your default browser, except it's not a browser. Choosy is a browser launcher and pass through. So anytime you click a hyperlink on your mac , in any piece of software EXCEPT for browsers, Choosy launches and pops up a menu containing a list of all the browsers you added to the Choosy preferences. &nbsp;For instance, if someone sends me a link in Messages, or in Mail, or even a link in iTerm, Choosy pops up and asks me to pick a browser.</p>
+<p><img src="http://bartdorsey.com/wp-content/uploads/2014/06/Screenshot-2014-06-23-14.22.24.png" alt="" /></p>
+<blockquote><p>BTW, if you are wondering how I got Internet Explorer in my list, that's VMWare Fusion's application shortcut to Internet Explorer.</p></blockquote>
+<p>So, I can keep Chrome for work stuff, and Safari for everything else. I also added <a href="https://www.whitehatsec.com/aviator/">Whitehat Aviator</a> to the list, so if it's just a "junk" link and I don't want web bugs tracking me, I just open it in Aviator, and it's like opening it directly into Chrome Incognito mode.</p>
+<p>So far, so good.</p>
+<p>But let's make Choosy even more powerful.</p>
+<p>Enter <a href="http://fluidapp.com">Fluid</a>.</p>
+<p>Fluid is a single web site browser. Fluid lets you create an "Application" that fits in your Applications folder that navigates only to a single website. This is handy, because, for instance I can isolate sites like Facebook into their own app. You can even set the Facebook fluid app to store cookies separately from Safari. This means that facebook's cookies are only available inside the facebook fluid app, and I can keep Safari logged out of facebook.</p>
+<p>But there's a problem. What happens if you click on a link to facebook in email or messages? It'll open Choosy, and sure I could add the Facebook app into Choosy and pick it, but there's a better way.</p>
+<p>In Choosy's preferences you can setup Advanced Behavior Rules. So , I can make a rule like this:</p>
+<p><img src="http://bartdorsey.com/wp-content/uploads/2014/06/Screenshot-2014-06-23-14.15.54.png" alt="" /></p>
+<p>So, now anytime I click a link for facebook.com, Choosy will automatically open the link in my isolated facebook fluid app.</p>
+<p>I've setup several of these now, isolating a lot of services into their own applications that are in effect sandboxed from my regular web browsing activities.</p>
+<p>I even use this for some of my work stuff. We use podio for task management, and now I have a podio app. Pinterest has it's own app. Google Plus has it's own app. The possibilities are endless.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>

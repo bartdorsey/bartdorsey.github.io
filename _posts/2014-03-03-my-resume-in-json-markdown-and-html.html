@@ -1,0 +1,82 @@
+---
+layout: post
+status: publish
+published: true
+title: My Resume, in JSON, Markdown and HTML with Javascript Promises
+author:
+  display_name: Bart Dorsey
+  login: bart
+  email: bart@bartdorsey.com
+  url: http://bartdorsey.com
+author_login: bart
+author_email: bart@bartdorsey.com
+author_url: http://bartdorsey.com
+wordpress_id: 210
+wordpress_url: http://bartdorsey.com/?p=210
+date: '2014-03-03 16:26:14 -0500'
+date_gmt: '2014-03-03 16:26:14 -0500'
+categories:
+- Uncategorized
+tags:
+- code
+- javascript
+- resume
+- promises
+- jquery
+comments: []
+---
+<p><span style="line-height: 1.5em;">As an exercise in programming and learning some new javascript features, I've written my <a title="Resume" href="http://bartdorsey.com/resume/">resume</a> as JSON. The JSON gets loaded and turned into&nbsp;</span><a style="line-height: 1.5em;" href="http://daringfireball.net/projects/markdown/">Markdown</a><span style="line-height: 1.5em;">&nbsp;via&nbsp;</span><a style="line-height: 1.5em;" href="http://handlebarsjs.com/">handlebars.js</a><span style="line-height: 1.5em;">, which then gets converted into HTML by&nbsp;</span><a style="line-height: 1.5em;" href="https://github.com/chjj/marked">marked.js</a><span style="line-height: 1.5em;">. The page also uses&nbsp;</span><a style="line-height: 1.5em;" href="http://requirejs.org/">require.js</a><span style="line-height: 1.5em;">&nbsp;for module loading and&nbsp;</span><a style="line-height: 1.5em;" href="http://highlightjs.org/">highlight.js</a><span style="line-height: 1.5em;">&nbsp;for syntax highlighting of the code blocks. You can see all of the code that makes the page run on&nbsp;</span><a style="line-height: 1.5em;" href="https://bitbucket.org/bartdorsey/resume-json-to-markdown">bitbucket</a><span style="line-height: 1.5em;">.</span></p>
+<p>One of the interesting features I learned while building this is the idea of Javascript "Promises". &nbsp; Often, when dealing with the asynchronous nature of javascript you end up having to nest calls, much like I have to do when rendering the different sections of the resume.</p>
+<p>At first, I was doing something like this with nested closures and callbacks that get the processed markdown as an incoming parameter. &nbsp;As you can see, this isn't very readable and would get worse and worse as you add more and more sections of the resume to parse.</p>
+<pre class="toolbar:0 lang:js decode:true">self.contact.toMarkdown(function(contactMarkdown){
+  self.experience.toMarkdown(function(experienceMarkdown){
+    self.skills.toMarkdown(function(skillsMarkdown){
+      var markdown = contactMarkdown;
+      markdown += experienceMarkdown;
+      markdown += skillsMarkdown;
+
+      // Put markdown on the page now and process it using marked
+
+    }
+  }
+});</pre>
+<p>By using jQuery's "<a href="http://api.jquery.com/category/deferred-object/">Deferred</a>" functionality, each of my toMarkdown functions return an object known as a "promise". Basically my asynchronous code goes off into a queue inside the Deferred object, and posts it's results to it using a method called "resolve". &nbsp;Here's what that looks like inside of one of the toMarkdown() functions.</p>
+<pre class="toolbar:0 lang:js decode:true crayon-selected">Contact.prototype.toMarkdown = function(onComplete){
+  var self = this;
+
+  var promise = $.Deferred();
+
+  // Build out the markdown with handlebars.js
+  self.renderTemplate('contact',self.contact,function(markdown){
+    promise.resolve(markdown);
+  });
+  return promise;
+};</pre>
+<p>It creates a promise, and then immediately called "renderTemplate", which is an asynchronous function that goes off and makes an ajax call to get a Handlebars template and render the markdown. Of course, before that even gets to happen, this function ends and returns the "promise" to what called it.</p>
+<p>Later on, I can call "done" on the promise object, &nbsp;and pass it a callback and when the render is actually finished, I'll get the markdown passed to my callback. That would look something like this:</p>
+<pre class="toolbar:0 lang:js decode:true">var contactPromise = self.contact.toMarkdown();
+
+contactPromise.done(function(markdown){
+  // do something with the markdown here
+};</pre>
+<p>Of course, this is only one call. What happens when I want to do all of them? Aren't we in the same exact boat of nesting asynchronous callbacks? After all I need to combine all the output from all of the toMarkdown() functions.</p>
+<p>Well, jQuery has a solution for that. It is the <a href="https://api.jquery.com/jQuery.when/">$.when</a> function.</p>
+<pre class="toolbar:0 lang:js decode:true">// Go fetch all the pieces
+var contactPromise = self.contact.toMarkdown();
+var skillsPromise = self.skills.toMarkdown();
+var experiencePromise = self.experience.toMarkdown();
+
+// When all of them are done
+$.when(contactPromise, skillsPromise,experiencePromise).done(function(contactMarkdown, skillsMarkdown,experienceMarkdown) {
+  // Append all the markdown together
+  var markdown = contactMarkdown;
+  markdown += experienceMarkdown;
+  markdown += skillsMarkdown;
+
+  // Now do something with the markdown
+});</pre>
+<p>So now, I create the three calls to toMarkdown() right inline in a row, much like you do in synchronous programming. &nbsp;However, I don't get back the markdown, I instead get back a promise object (a jQuery.Deferred in this case).</p>
+<p>The $.when method takes promises as arguments and returns another promise. &nbsp;I call .done on that promise and when it's finished, I get all three rendered markdowns passed to my callback function.</p>
+<p>Then I can concatenate them together and I'm off to the races, and I have some code that is really easy to read (Assuming you know how promises work)</p>
+<p>jQuery's Deferred object isn't the only way to do promises, but I was already using jQuery and it was convenient. There actually is a sort of a standard forming around javascript promises. If you are interested, you can read more about that at <a href="http://www.promisejs.org">promisesjs.org</a>.</p>
+<p>Oh, and if you are looking to hire a javascript developer, don't forget to check out the resume itself <a title="Resume" href="http://bartdorsey.com/resume/">here</a>.</p>
