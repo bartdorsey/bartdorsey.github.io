@@ -22,6 +22,7 @@
       {%- if site.data.navigation.header -%}
       <nav class="navigation">
         <ul>
+          <li><a rel="me" href="https://hachyderm.io/@bartdorsey">Mastodon</a></li>
           {%- for _item in site.data.navigation.header -%}
             {%- include snippets/get-nav-url.html path=_item.url -%}
             {%- assign _nav_url = __return -%}
